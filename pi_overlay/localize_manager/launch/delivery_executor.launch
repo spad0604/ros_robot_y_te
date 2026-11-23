@@ -1,0 +1,22 @@
+<launch>
+  <arg name="robot_code" default="MEDIBOT-01" />
+  <arg name="credentials_file" default="$(env HOME)/.config/medibot/order_listener.json" />
+  <arg name="auto_charge_enabled" default="$(optenv ROBOT_AUTO_CHARGE_ENABLED false)" />
+  <arg name="auto_charge_point_name" default="$(optenv ROBOT_AUTO_CHARGE_POINT_NAME)" />
+  <arg name="auto_charge_low_voltage" default="$(optenv ROBOT_AUTO_CHARGE_LOW_VOLTAGE 10.5)" />
+  <arg name="auto_charge_recovery_voltage" default="$(optenv ROBOT_AUTO_CHARGE_RECOVERY_VOLTAGE 0)" />
+  <arg name="battery_discharge_current_topic" default="$(optenv ROBOT_BATTERY_DISCHARGE_CURRENT_TOPIC)" />
+  <node pkg="localize_manager" type="delivery_executor.py" name="delivery_executor" output="screen" respawn="false">
+    <param name="auto_charge_enabled" value="$(arg auto_charge_enabled)" type="bool" />
+    <param name="auto_charge_point_name" value="$(arg auto_charge_point_name)" type="str" />
+    <param name="auto_charge_low_voltage" value="$(arg auto_charge_low_voltage)" type="double" />
+    <param name="auto_charge_recovery_voltage" value="$(arg auto_charge_recovery_voltage)" type="double" />
+    <param name="battery_discharge_current_topic" value="$(arg battery_discharge_current_topic)" type="str" />
+    <param name="robot_code" value="$(arg robot_code)" />
+    <param name="credentials_file" value="$(arg credentials_file)" />
+    <param name="base_frame" value="base_link" />
+    <param name="global_frame" value="map" />
+    <param name="network_grace_seconds" value="3.0" />
+    <param name="goal_timeout_seconds" value="300.0" />
+  </node>
+</launch>

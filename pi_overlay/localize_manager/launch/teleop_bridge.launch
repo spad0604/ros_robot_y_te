@@ -1,0 +1,8 @@
+<launch>
+  <arg name="robot_code" default="MEDIBOT-01" />
+  <arg name="credentials_file" default="$(env HOME)/.config/medibot/order_listener.json" />
+  <node pkg="localize_manager" type="teleop_bridge.py" name="mobile_teleop_bridge" output="screen" respawn="false">
+    <param name="robot_code" value="$(arg robot_code)" />
+    <param name="credentials_file" value="$(arg credentials_file)" />
+  </node>
+</launch>

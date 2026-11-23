@@ -1,0 +1,55 @@
+<launch>
+  <arg name="robot_code" default="MEDIBOT-01" />
+  <arg name="api_base_url" default="https://34.172.236.168:8081/api/v1" />
+  <arg name="ws_url" default="wss://34.172.236.168:8081/ws" />
+  <arg name="credentials_file" default="~/.config/medibot/order_listener.json" />
+  <arg name="scan_topic" default="/scan" />
+  <arg name="base_frame" default="base_link" />
+  <arg name="pose_topic" default="/person_tracker/pose" />
+  <arg name="camera_horizontal_fov_degrees" default="74.0" />
+  <arg name="camera_yaw_offset_degrees" default="0.0" />
+  <arg name="start_localization_service" default="/localize_manager/start_localization" />
+  <arg name="active_map_name_param" default="/localize_manager/active_map_name" />
+
+  <node pkg="localize_manager"
+        type="follow_me_bridge.py"
+        name="follow_me_bridge"
+        output="screen"
+        respawn="false">
+    <param name="robot_code" value="$(arg robot_code)" />
+    <param name="api_base_url" value="$(arg api_base_url)" />
+    <param name="ws_url" value="$(arg ws_url)" />
+    <param name="credentials_file" value="$(arg credentials_file)" />
+  </node>
+
+  <node pkg="localize_manager"
+        type="follow_person_pose.py"
+        name="follow_person_pose"
+        output="screen"
+        respawn="true"
+        respawn_delay="3">
+    <param name="robot_code" value="$(arg robot_code)" />
+    <param name="scan_topic" value="$(arg scan_topic)" />
+    <param name="base_frame" value="$(arg base_frame)" />
+    <param name="pose_topic" value="$(arg pose_topic)" />
+    <param name="camera_horizontal_fov_degrees" value="$(arg camera_horizontal_fov_degrees)" />
+    <param name="camera_yaw_offset_degrees" value="$(arg camera_yaw_offset_degrees)" />
+    <param name="max_candidate_age_seconds" value="1.5" />
+  </node>
+
+  <node pkg="localize_manager"
+        type="follow_me_motion.py"
+        name="follow_me_motion"
+        output="screen"
+        respawn="true"
+        respawn_delay="3">
+    <param name="pose_topic" value="$(arg pose_topic)" />
+    <param name="action_name" value="/moving_server/move_command" />
+    <param name="follow_distance" value="1.0" />
+    <param name="goal_timeout_seconds" value="3600.0" />
+    <param name="pose_timeout_seconds" value="1.5" />
+    <param name="start_localization_service" value="$(arg start_localization_service)" />
+    <param name="active_map_name_param" value="$(arg active_map_name_param)" />
+    <param name="localization_timeout_seconds" value="45.0" />
+  </node>
+</launch>

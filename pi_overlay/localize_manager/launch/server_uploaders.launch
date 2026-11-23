@@ -1,0 +1,35 @@
+<launch>
+    <node pkg="localize_manager" type="map_uploader.py" name="map_uploader" output="screen">
+        <param name="maps_dir" value="$(find localize_manager)/maps" />
+        <param name="api_base_url" value="https://34.172.236.168:8081/api/v1" />
+        <param name="robot_code" value="MEDIBOT-01" />
+        <param name="scan_interval_seconds" value="3" />
+    </node>
+
+    <node pkg="localize_manager" type="sensor_telemetry_uploader.py" name="sensor_telemetry_uploader" output="screen">
+        <param name="api_base_url" value="https://34.172.236.168:8081/api/v1" />
+        <param name="robot_code" value="MEDIBOT-01" />
+        <param name="publish_interval_seconds" value="2.0" />
+        <param name="max_sensor_age_seconds" value="15.0" />
+        <param name="front_angle_rad" value="3.141592653589793" />
+        <param name="esp32_sensor_topic" value="/esp32/sensor_data" />
+    </node>
+
+    <node pkg="localize_manager" type="robot_pose_uploader.py" name="robot_pose_uploader" output="screen" respawn="true" respawn_delay="5">
+        <param name="api_base_url" value="https://34.172.236.168:8081/api/v1" />
+        <param name="robot_code" value="MEDIBOT-01" />
+        <param name="credentials_file" value="$(env HOME)/.config/medibot/order_listener.json" />
+        <param name="global_frame" value="map" />
+        <param name="base_frame" value="base_link" />
+        <param name="publish_rate_hz" value="2.0" />
+        <param name="map_refresh_seconds" value="2.0" />
+    </node>
+
+    <node pkg="localize_manager" type="robot_alert_uploader.py" name="robot_alert_uploader" output="screen" respawn="true" respawn_delay="5">
+        <param name="api_base_url" value="https://34.172.236.168:8081/api/v1" />
+        <param name="robot_code" value="MEDIBOT-01" />
+        <param name="alert_topic" value="/robot/alerts" />
+        <param name="request_timeout_seconds" value="8.0" />
+        <param name="retry_delay_seconds" value="5.0" />
+    </node>
+</launch>

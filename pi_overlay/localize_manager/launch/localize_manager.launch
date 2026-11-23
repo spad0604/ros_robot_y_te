@@ -1,0 +1,50 @@
+<launch>
+    <arg name="image_topic" default="/camera/image_raw" />
+    <arg name="camera_device" default="/dev/video0" />
+    <arg name="vision_python" default="$(find localize_manager)/scripts/vision_python.sh" />
+    <arg name="fire_model" default="$(find localize_manager)/models/fire_smoke.pt" />
+    <arg name="fall_model" default="$(find localize_manager)/models/huma_fall.pt" />
+    <arg name="robot_code" default="MEDIBOT-01" />
+    <arg name="scan_topic" default="/scan" />
+    <arg name="base_frame" default="base_link" />
+    <arg name="pose_topic" default="/person_tracker/pose" />
+    <arg name="camera_horizontal_fov_degrees" default="74.0" />
+    <arg name="camera_yaw_offset_degrees" default="0.0" />
+
+    <node
+        pkg="localize_manager"
+        type="localize_manager_node.py"
+        name="localize_manager"
+        output="screen"
+    >
+        <!-- The manager reads these as private parameters (~map_directory, etc.). -->
+        <rosparam
+            command="load"
+            file="$(find localize_manager)/config/localize_manager.yaml"
+        />
+    </node>
+
+    <!-- Standalone uploaders; also runnable with server_uploaders.launch. -->
+    <include file="$(find localize_manager)/launch/server_uploaders.launch" />
+
+    <include file="$(find localize_manager)/launch/order_listener.launch" />
+
+    <include file="$(find localize_manager)/launch/teleop_bridge.launch" />
+    <include file="$(find localize_manager)/launch/delivery_executor.launch" />
+    <include file="$(find localize_manager)/launch/vision_alert_detector.launch">
+        <arg name="image_topic" value="$(arg image_topic)" />
+        <arg name="camera_device" value="$(arg camera_device)" />
+        <arg name="vision_python" value="$(arg vision_python)" />
+        <arg name="fire_model" value="$(arg fire_model)" />
+        <arg name="fall_model" value="$(arg fall_model)" />
+        <arg name="robot_code" value="$(arg robot_code)" />
+    </include>
+    <include file="$(find localize_manager)/launch/follow_me_bridge.launch">
+        <arg name="robot_code" value="$(arg robot_code)" />
+        <arg name="scan_topic" value="$(arg scan_topic)" />
+        <arg name="base_frame" value="$(arg base_frame)" />
+        <arg name="pose_topic" value="$(arg pose_topic)" />
+        <arg name="camera_horizontal_fov_degrees" value="$(arg camera_horizontal_fov_degrees)" />
+        <arg name="camera_yaw_offset_degrees" value="$(arg camera_yaw_offset_degrees)" />
+    </include>
+</launch>

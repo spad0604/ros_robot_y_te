@@ -1,0 +1,36 @@
+<launch>
+  <arg name="api_base_url" default="https://34.172.236.168:8081/api/v1" />
+  <arg name="robot_code" default="MEDIBOT-01" />
+  <arg name="credentials_file" default="$(env HOME)/.config/medibot/order_listener.json" />
+  <arg name="state_file" default="$(env HOME)/.ros/order_listener_seen.json" />
+  <arg name="map_selection_state_file" default="$(env HOME)/.ros/order_listener_map_selection.json" />
+  <arg name="mapping_command_state_file" default="$(env HOME)/.ros/order_listener_mapping_command.json" />
+  <arg name="map_selection_service" default="/localize_manager/start_localization" />
+  <arg name="start_mapping_service" default="/localize_manager/start_mapping" />
+  <arg name="save_map_service" default="/localize_manager/save_map" />
+  <arg name="stop_service" default="/localize_manager/stop" />
+  <arg name="localize_state_topic" default="/localize_manager/state" />
+  <arg name="orders_topic" default="/robot/orders" />
+
+  <node pkg="localize_manager"
+        type="order_listener.py"
+        name="order_listener"
+        output="screen"
+        respawn="true"
+        respawn_delay="5">
+    <param name="api_base_url" value="$(arg api_base_url)" />
+    <param name="robot_code" value="$(arg robot_code)" />
+    <param name="credentials_file" value="$(arg credentials_file)" />
+    <param name="state_file" value="$(arg state_file)" />
+    <param name="map_selection_state_file" value="$(arg map_selection_state_file)" />
+    <param name="mapping_command_state_file" value="$(arg mapping_command_state_file)" />
+    <param name="map_selection_service" value="$(arg map_selection_service)" />
+    <param name="start_mapping_service" value="$(arg start_mapping_service)" />
+    <param name="save_map_service" value="$(arg save_map_service)" />
+    <param name="stop_service" value="$(arg stop_service)" />
+    <param name="localize_state_topic" value="$(arg localize_state_topic)" />
+    <param name="orders_topic" value="$(arg orders_topic)" />
+    <param name="poll_interval_seconds" value="2.0" />
+    <param name="request_timeout_seconds" value="8.0" />
+  </node>
+</launch>
